@@ -1,4 +1,5 @@
-let firstReveal = false;
+let nReveals = 0;
+const maxReveals = 2;
 let correctChoice;
 
 //When player clicks on option
@@ -10,13 +11,19 @@ function select(option) {
     currentChoice.select();
 }
 
+//reveals all options
+function revealAll() {
+    options.forEach(option => option.reveal());
+}
+
 //resets game
 function reset() {
     options.forEach(option => option.reset());
-    firstReveal = false;
+    nReveals = 0;
     currentChoice = undefined;
     correctChoice = Math.floor(Math.random() * options.length);
     feedback.innerText = '';
+    revealButton.style.visibility = 'hidden';
 }
 
 //Actions to perform when submitting
@@ -25,7 +32,7 @@ function submit() {
         feedback.innerText = 'Please select one of the bags!';
         return;
     }
-    if (!firstReveal) {
+    if (nReveals < maxReveals) {
         revealBadChoice();
     } else {
         checkAnswer();
@@ -48,11 +55,13 @@ function reveal(option) {
 
 //Reveals the wrong option that player did not select
 function revealBadChoice() {
-    while(!firstReveal) {
+    let revealed = false;
+    while(nReveals <= maxReveals && !revealed) {
         let option = options[Math.floor(Math.random() * options.length)];
-        if (option.number != currentChoice.number && option.number != correctChoice) {
+        if (option.number != currentChoice.number && option.number != correctChoice && option.active) {
             option.reveal();
-            firstReveal = true;
+            nReveals++;
+            revealed = true;
             //setting feedback message
             feedback.innerText = `Lord Ducky has revealed that option #${option.number + 1} is a duck. You may switch your choice if you like.`;
         }
@@ -68,6 +77,7 @@ function checkAnswer() {
     } else {
         feedback.innerText = 'Oh no! You only found ducks!';
     }
+    revealButton.style.visibility = 'visible';
     options.forEach(option => {
         option.active = false;
     });
