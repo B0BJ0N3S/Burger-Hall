@@ -1,6 +1,7 @@
 body {
     background-image: url("../images/hamburger.jpeg");
     background-size: cover;
+    background-position: center;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     text-align: center;
 }
@@ -36,6 +37,12 @@ body::before {
 .option {
     max-width: 200px;
     opacity: 0.9;
+}
+
+@media only screen and (max-width: 450px) {
+    .option {
+        max-width: 80px;
+    }
 }
 
 #feedback {
