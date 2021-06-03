@@ -39,7 +39,7 @@ body::before {
     opacity: 0.9;
 }
 
-@media only screen and (max-width: 450px) {
+@media only screen and (max-width: 700px) {
     .option {
         max-width: 80px;
     }
