@@ -1,45 +1,27 @@
 let firstReveal = false;
-const options = [option0, option1, option2];
-let selection;
 let correctChoice;
-
-//unselecting this option
-function deselect(option) {
-    option.src = unselectedImage;
-}
 
 //When player clicks on option
 function select(option) {
-    //unselecting previous choice
-    if (selection >= 0) {
-        deselect(options[selection]);
+    if (currentChoice) {
+        currentChoice.deselect();
     }
-    //updating selection value
-    for (let i in options) {
-        if (option == options[i]) {
-            selection = i;
-            break;
-        }
-    }
-    //highlighting new choice
-    options[selection].src = selectedImage;
+    currentChoice = option;
+    currentChoice.select();
 }
 
 //resets game
 function reset() {
-    document.querySelectorAll(".option").forEach(element => {
-        deselect(element);
-    });
-    initializeOptionListeners();
+    options.forEach(option => option.reset());
     firstReveal = false;
-    selection = undefined;
+    currentChoice = undefined;
     correctChoice = Math.floor(Math.random() * options.length);
-    feedback.innerText = ' ';
+    feedback.innerText = correctChoice;
 }
 
 //Actions to perform when submitting
 function submit() {
-    if (selection == undefined) {
+    if (currentChoice == undefined) {
         feedback.innerText = 'Please select one of the bags!';
         return;
     }
@@ -50,44 +32,38 @@ function submit() {
     }
 }
 
+/*
 //removes all listeners from option
 function removeListeners(option) {
     option.removeEventListener('mouseenter', OptionMouseEnter);
     option.removeEventListener('mouseleave', OptionMouseLeave);
     option.removeEventListener('click', OptionMouseClick);
 }
+*/
 
-//Reveals an option and removes all listeners
+//Reveals an option
 function reveal(option) {
-    for (let i in options) {
-        if (options[i] == option) {
-            i == correctChoice? option.src = rightChoiceImage : option.src = wrongChoiceImage;
-            option.style.opacity = 1;
-            //Removing listeners
-            removeListeners(option);
-        }
-    }
+    option.reveal();
 }
 
 //Reveals the wrong option that player did not select
 function revealBadChoice() {
-    //revealing bad choice
-    for (let i in options) {
-        if (i != correctChoice && options[i] != options[selection]) {
-            reveal(options[i]);
+    while(!firstReveal) {
+        let option = options[Math.floor(Math.random() * options.length)];
+        if (option.number != currentChoice.number && option.number != correctChoice) {
+            option.reveal();
+            firstReveal = true;
             //setting feedback message
-            feedback.innerText = `Lord Ducky has revealed that option #${parseInt(i) + 1} is a duck. You may switch your choice if you like.`
-            break;
+            feedback.innerText = `Lord Ducky has revealed that option #${option.number + 1} is a duck. You may switch your choice if you like.`;
         }
     }
-    firstReveal = true;
 }
 
 //Reveals all options
 function checkAnswer() {
-    reveal(options[selection]);
+    currentChoice.reveal();
     //options.forEach(option => removeListeners(option));
-    if (selection == correctChoice) {
+    if (currentChoice.number == correctChoice) {
         feedback.innerText = 'Congratulations! You found the burger!';
     } else {
         feedback.innerText = 'Oh no! You only found ducks!';

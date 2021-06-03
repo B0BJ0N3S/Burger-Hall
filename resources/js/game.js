@@ -4,32 +4,65 @@ const unselectedImage = "resources/images/paper\ bag.png";
 const selectedImage = "resources/images/Paper\ bag\ selected.png";
 const unselectedOpacity = 0.9;
 
-const option0 = document.getElementById('option0');
-const option1 = document.getElementById('option1');
-const option2 = document.getElementById('option2');
+
+const optionFactory = (element, number) => {
+    return {
+        element,
+        number,
+        active: true,
+        mouseEnter() {
+            if (this.active) {
+                this.element.style.opacity = 1;
+            }
+        },
+        mouseLeave() {
+            if (this.active) {
+                this.element.style.opacity = unselectedOpacity;
+            }
+        },
+        mouseClick() {
+            if (this.active) {
+                select(this);
+            }
+        },
+
+        select() {
+            this.element.src = selectedImage;
+        },
+        deselect() {
+            this.element.src = unselectedImage;
+        },
+        reveal() {
+            if (this.number == correctChoice) {
+                this.element.src = rightChoiceImage;
+            } else {
+                this.element.src = wrongChoiceImage;
+            }
+            this.element.style.opacity = 1;
+            this.active = false;
+        },
+        reset() {
+            this.deselect();
+            this.active = true;
+        }
+    }
+}
+
+const option0 = optionFactory(document.getElementById('option0'), 0);
+const option1 = optionFactory(document.getElementById('option1'), 1);
+const option2 = optionFactory(document.getElementById('option2'), 2);
+const options = [option0, option1, option2];
 const feedback = document.getElementById('feedback');
 const resetButton = document.getElementById('reset');
 const submitButton = document.getElementById('submit');
 
 
 
-
-//adding hover/click effects for all options
-function OptionMouseEnter(element) {
-    element.style.opacity = 1;
-}
-function OptionMouseLeave(element) {
-    element.style.opacity = unselectedOpacity;
-}
-function OptionMouseClick(element) {
-    select(element);
-}
-
 function initializeOptionListeners() {
-    document.querySelectorAll(".option").forEach(element => {
-        element.addEventListener('mouseenter', e => OptionMouseEnter(element));
-        element.addEventListener('mouseleave', e => OptionMouseLeave(element));
-        element.addEventListener('click', () => OptionMouseClick(element));
+    options.forEach(option => {
+        option.element.addEventListener('mouseenter', e => option.mouseEnter());
+        option.element.addEventListener('mouseleave', e => option.mouseLeave());
+        option.element.addEventListener('click', () => option.mouseClick());
     });
 }
 initializeOptionListeners();
