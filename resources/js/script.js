@@ -16,7 +16,7 @@ function reset() {
     firstReveal = false;
     currentChoice = undefined;
     correctChoice = Math.floor(Math.random() * options.length);
-    feedback.innerText = correctChoice;
+    feedback.innerText = '';
 }
 
 //Actions to perform when submitting
