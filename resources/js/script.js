@@ -68,6 +68,9 @@ function checkAnswer() {
     } else {
         feedback.innerText = 'Oh no! You only found ducks!';
     }
+    options.forEach(option => {
+        option.active = false;
+    });
 }
 
 
